@@ -18,6 +18,19 @@ docker run -it --device /dev/gpiomem -p 4242:4242 uupascal/rest-light:DEV-latest
 
 #### docker-compose
 ```yaml
+version: "3.8"
+
+services:
+  rest-light:
+    container_name: rest-light
+    image: "uupascal/rest-light:latest"
+    restart: unless-stopped
+    volumes:
+        - "%APP_DATA_PATH/rest-light:/etc/rest-light"
+    devices:
+        - /dev/gpiomem
+    ports:
+        - 4242
 
 ```
 
