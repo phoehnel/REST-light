@@ -34,6 +34,12 @@ services:
 
 ```
 
+## Example Call
+
+```
+curl http://192.168.0.45:4242/send --data-urlencode "api_key=KIvwKTFVMU9v7Bj8lpvD8fQ6sjxd19txv6DfGGupGN" --data-urlencode "unit_code=01000" --data-urlencode "system_code=2" --data-urlencode "state=0" 
+```
+
 
 ## Credits
 
