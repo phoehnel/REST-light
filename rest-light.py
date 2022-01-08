@@ -1,11 +1,12 @@
 ##################################################
 # Imports & Global variables
 ##################################################
-from flask import Flask
+from flask import Flask, request
 import os
 import logging
 import re
 import string
+import subprocess
 import sys
 import random
 
@@ -28,7 +29,7 @@ def load_key():
     try:
         with open(api_key_path, 'r') as f:
             lines = f.readlines()
-            key_tmp = re.search("\w+", lines[0])
+            key_tmp = re.findall("\w+", lines[0])[0]
     except:
         logging.info('No API-Key found, generating new one')
 
@@ -53,11 +54,44 @@ def load_key():
         return new_key
 
 # function to check, if a provided api-key is valid
-def check_access(input_api_key: str):
-    if input_api_key == LOADED_API_KEY:
-        return True
+def check_access(input_args):
+    if 'api_key' in input_args:
+        provided_key = sanitize_input(input_args['api_key'])
+        if provided_key == LOADED_API_KEY:
+            return (True, None)
+        else:
+            logging.warning('Request with wrong API-Key received')
+            return (False, { 'error': 'Wrong API-Key provided' })
     else:
-        return False
+        logging.warning('Request without API-Key received')
+        return (False, { 'error': 'No API-Key provided' })
+
+# function to reveive arguments from request
+def parse_request(input_args, required_arguments):
+    valid, error = check_access(input_args)
+    if not valid:
+        return (valid, error)
+
+    arguments = {}
+    for argument in required_arguments:
+        if argument in input_args:
+            arguments[argument] = sanitize_input(input_args[argument])
+        else:
+            logging.info('API-Request without mandory field ' + argument)
+            return (False, { 'error': 'Mandatory field ' + argument + ' not provided' })
+    
+    return (True, arguments)
+
+# function that generates a return dict for a completed subprocess 
+def parse_results(completed_process):
+    if completed_process is not None and completed_process.returncode == 0:
+        return { 'status': 'Success', 'stdout': completed_process.stdout }
+    elif completed_process is not None and 'stderr' in completed_process:
+        logging.error("Running of subprocess failed with output: " + run_result.stderr)
+        return { 'status': 'Error', 'stdout': completed_process.stdout, 'stdout': completed_process.stderr }
+    else:
+        logging.error("Running of subprocess failed without output")
+        return { 'status': 'Error', 'stdout': 'Could not run command!' }
 
 # setup logging on startup
 def setup_logging():
@@ -70,13 +104,36 @@ def setup_logging():
     handler.setFormatter(formatter)
     root.addHandler(handler)
 
+# function that cleans input from possible injections
+def sanitize_input(input):
+    return re.findall("\w+", str(input))[0]
+
 ##################################################
 # Flask routes
 ##################################################
 # status page
-@app.route('/')
+@app.route('/', methods=['GET'])
 def hello():
     return 'Running <a href="https://github.com/' + str(os.getenv('GITHUB_REPOSITORY')) + '">REST-Light</a> Version ' + str(os.getenv('APP_VERSION'))
+
+# api to switch sockets
+@app.route('/send', methods=['POST'])
+def send():
+    logging.info(request.form.to_dict(flat=False))
+    valid, results = parse_request(request.form, ['system_code', 'unit_code', 'state'])
+    if not valid:
+        return results
+
+    run_result = None
+    try:
+        run_result = subprocess.run(["/opt/433Utils", 
+                                "send", 
+                                results['system_code'],
+                                results['unit_code'],
+                                results['state'] ], capture_output=True)
+    except:
+        logging.error("Error in Subprocess Call")
+    return parse_results(run_result)
 
 
 ##################################################
