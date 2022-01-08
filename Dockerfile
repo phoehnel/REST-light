@@ -7,8 +7,7 @@ ENV APP_VERSION="$APP_VERSION"
 ENV APP_PATH="/etc/rest-light"
 
 # get dependencies
-RUN pip install -r "$APP_PATH/requirements.txt" \
-    && mkdir -p /etc/rest-light \
+RUN mkdir -p /etc/rest-light \
     && apk update \
     && apk add --no-cache git \
     && git clone  --recursive https://github.com/ninjablocks/433Utils.git /opt/433Utils \
@@ -19,6 +18,7 @@ RUN pip install -r "$APP_PATH/requirements.txt" \
 
 # Copy App
 COPY . $APP_PATH
+RUN pip install -r "$APP_PATH/requirements.txt"
 
 # Run
 EXPOSE 4242
