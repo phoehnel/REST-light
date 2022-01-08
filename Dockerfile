@@ -18,7 +18,7 @@ RUN pip install --no-cache-dir  -r requirements.txt \
     && apt-get update \
     && apt-get install -y --no-install-recommends git \
     && git clone --recursive -b "final_official_2.50" https://github.com/WiringPi/WiringPi.git /opt/wiringPi \
-    && cd /opt/wiringPi && && rm -rf .git && ./build \
+    && cd /opt/wiringPi && rm -rf .git && ./build \
     && git clone --recursive https://github.com/ninjablocks/433Utils.git /opt/433Utils \
     && cd /opt/433Utils \
     && git reset --hard "31c0ea4e158287595a6f6116b6151e72691e1839" \
