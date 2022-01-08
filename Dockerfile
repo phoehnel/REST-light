@@ -6,10 +6,6 @@ ARG APP_VERSION
 ENV APP_VERSION="$APP_VERSION"
 ENV APP_PATH="/etc/rest-light"
 
-# Copy App
-COPY . $APP_PATH
-WORKDIR $APP_PATH
-
 # get dependencies
 RUN pip install -r "$APP_PATH/requirements.txt" \
     && mkdir -p /etc/rest-light \
@@ -20,6 +16,10 @@ RUN pip install -r "$APP_PATH/requirements.txt" \
     && git reset --hard "31c0ea4e158287595a6f6116b6151e72691e1839" \
     && rm -rf .git \
     && rm -rf /tmp/* /var/cache/apk/*
+
+# Copy App
+COPY . $APP_PATH
+WORKDIR $APP_PATH
 
 # Run
 EXPOSE 4242
