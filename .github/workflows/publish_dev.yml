@@ -36,7 +36,7 @@ jobs:
         - name: Build the tagged Docker image
           run: > 
             docker buildx build 
-            --platform linux/amd64,linux/arm64,linux/arm/v7 
+            --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 
             --file Dockerfile 
             --push
             --build-arg APP_VERSION="${{ steps.date.outputs.date }}"
