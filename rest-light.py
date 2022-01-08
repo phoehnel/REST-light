@@ -76,7 +76,7 @@ def setup_logging():
 # status page
 @app.route('/')
 def hello():
-    return 'Running <a href="https://gihub.com/' + os.getenv('GITHUB_REPOSITORY') + '">REST-Light</a> Version ' + os.getenv('APP_VERSION')
+    return 'Running <a href="https://github.com/' + str(os.getenv('GITHUB_REPOSITORY')) + '">REST-Light</a> Version ' + str(os.getenv('APP_VERSION'))
 
 
 ##################################################
@@ -87,4 +87,4 @@ if __name__ == '__main__':
     setup_logging()
     LOADED_API_KEY = load_key()
     # serve
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=4242)
