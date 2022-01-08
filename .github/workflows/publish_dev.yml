@@ -34,5 +34,5 @@ jobs:
           run: docker build . --file Dockerfile --tag "${IMAGE_NAME}:${{ steps.hash.outputs.tag }}" --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}" --tag "$IMAGE_NAME:DEV-latest"
 
         - name: Push the tagged Docker image
-          run: docker push "${IMAGE_NAME}:latest"
+          run: docker push "${IMAGE_NAME}:DEV-latest"
 
