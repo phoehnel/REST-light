@@ -39,9 +39,17 @@ def load_key():
         new_key = ''.join(random.choices(
             string.ascii_lowercase + string.ascii_uppercase + string.digits, k=42))
         # persists key
-        with open(api_key_path, 'w') as f:
-            f.write(new_key)
-        # return key
+        try:
+            with open(api_key_path, 'w') as f:
+                f.write(new_key)
+        except:
+            logging.info('Could not save API-Key in the following folder. Ensure permissions are correct! ' + basepath)
+            sys.exit()
+
+        # return key and log
+        logging.warning('##################################################')
+        logging.warning('Generated API-Key: ' + new_key)
+        logging.warning('##################################################')
         return new_key
 
 # function to check, if a provided api-key is valid
@@ -74,9 +82,9 @@ def hello():
 ##################################################
 # Main call
 ##################################################
-if __name == '__main__':
+if __name__ == '__main__':
     # init
-    LOADED_API_KEY = load_key()
     setup_logging()
+    LOADED_API_KEY = load_key()
     # serve
     app.run(debug=True, host='0.0.0.0')
