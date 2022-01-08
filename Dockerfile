@@ -16,7 +16,7 @@ COPY requirements.txt ./
 RUN pip install --no-cache-dir  -r requirements.txt \
     && mkdir -p /etc/rest-light \
     && apt-get update \
-    && apt-get install -y --no-install-recommends git \
+    && apt-get install -y --no-install-recommends git make gcc  \
     && git clone --recursive -b "final_official_2.50" https://github.com/WiringPi/WiringPi.git /opt/wiringPi \
     && cd /opt/wiringPi && rm -rf .git && ./build \
     && git clone --recursive https://github.com/ninjablocks/433Utils.git /opt/433Utils \
