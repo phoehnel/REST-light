@@ -7,22 +7,18 @@ ENV APP_VERSION="$APP_VERSION"
 ENV APP_PATH="/etc/rest-light"
 
 # Copy App
-RUN mkdir -p $APP_PATH \
-    mkdir -p /etc/rest-light
 COPY . $APP_PATH
 WORKDIR $APP_PATH
-RUN pip install -r "$APP_PATH/requirements.txt"
 
-# Clone 433Utils
-RUN apk update \
+# get dependencies
+RUN pip install -r "$APP_PATH/requirements.txt" \
+    && mkdir -p /etc/rest-light \
+    && apk update \
     && apk add --no-cache git \
     && git clone  --recursive https://github.com/ninjablocks/433Utils.git /opt/433Utils \
     && cd /opt/433Utils \
     && git reset --hard "31c0ea4e158287595a6f6116b6151e72691e1839" \
-    && rm -rf .git
-
-# Cleanup
-RUN apk update \
+    && rm -rf .git \
     && rm -rf /tmp/* /var/cache/apk/*
 
 # Run
