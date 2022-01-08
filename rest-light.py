@@ -6,6 +6,7 @@ import os
 import logging
 import re
 import string
+import sys
 import random
 
 app = Flask(__name__)
@@ -14,7 +15,7 @@ basepath = "/etc/rest-light"
 api_key_path = basepath + "/api-key.txt"
 
 ##################################################
-# function for api-key validation
+# utility functions
 ##################################################
 # loads key on app startup
 def load_key():
@@ -50,6 +51,17 @@ def check_access(input_api_key: str):
     else:
         return False
 
+# setup logging on startup
+def setup_logging():
+    root = logging.getLogger()
+    root.setLevel(logging.DEBUG)
+
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s:%(levelname)s: %(message)s')
+    handler.setFormatter(formatter)
+    root.addHandler(handler)
+
 ##################################################
 # Flask routes
 ##################################################
@@ -63,5 +75,8 @@ def hello():
 # Main call
 ##################################################
 if __name == '__main__':
+    # init
     LOADED_API_KEY = load_key()
+    setup_logging()
+    # serve
     app.run(debug=True, host='0.0.0.0')
