@@ -16,10 +16,12 @@ RUN pip install --no-cache-dir  -r requirements.txt \
     && mkdir -p /etc/rest-light \
     && apt-get update \
     && apt-get install -y --no-install-recommends git \
+    && git clone --recursive git clone git://git.drogon.net/wiringPi /opt/wiringPi \
+    && cd /opt/wiringPi && ./build \
     && git clone  --recursive https://github.com/ninjablocks/433Utils.git /opt/433Utils \
     && cd /opt/433Utils \
     && git reset --hard "31c0ea4e158287595a6f6116b6151e72691e1839" \
-    && rm -rf .git \
+    && rm -rf .git && make all \
     && rm -rf /tmp/* /var/lib/apt/lists/* \
     && cd "$APP_PATH"
 
