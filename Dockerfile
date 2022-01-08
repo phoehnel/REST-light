@@ -16,7 +16,7 @@ RUN pip install --no-cache-dir  -r requirements.txt \
     && mkdir -p /etc/rest-light \
     && apt-get update \
     && apt-get install -y --no-install-recommends git \
-    && git clone --recursive git://git.drogon.net/wiringPi /opt/wiringPi \
+    && git clone --recursive https://github.com/WiringPi/WiringPi.git /opt/wiringPi \
     && cd /opt/wiringPi && ./build \
     && git clone --recursive https://github.com/ninjablocks/433Utils.git /opt/433Utils \
     && cd /opt/433Utils \
