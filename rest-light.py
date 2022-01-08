@@ -5,13 +5,13 @@ from flask import Flask
 import os
 import logging
 import re
-import string    
+import string
 import random
 
-app             = Flask(__name__)               
-LOADED_API_KEY  = None                          # Stores the current valid api-key
-basepath        = "/etc/rest-light"
-api_key_path    = basepath + "/api-key.txt"
+app = Flask(__name__)
+LOADED_API_KEY = None                          # Stores the current valid api-key
+basepath = "/etc/rest-light"
+api_key_path = basepath + "/api-key.txt"
 
 ##################################################
 # function for api-key validation
@@ -35,7 +35,8 @@ def load_key():
     if key_tmp is not None:
         return key_tmp
     else:
-        new_key = ''.join(random.choices(string.ascii_lowercase + string.ascii_uppercase + string.digits, k = 42))
+        new_key = ''.join(random.choices(
+            string.ascii_lowercase + string.ascii_uppercase + string.digits, k=42))
         # persists key
         with open(api_key_path, 'w') as f:
             f.write(new_key)
@@ -58,11 +59,9 @@ def hello():
     return 'Running <a href="https://gihub.com/' + os.getenv('GITHUB_REPOSITORY') + '">REST-Light</a> Version ' + os.getenv('APP_VERSION')
 
 
-
 ##################################################
 # Main call
 ##################################################
 if __name == '__main__':
     LOADED_API_KEY = load_key()
     app.run(debug=True, host='0.0.0.0')
-
