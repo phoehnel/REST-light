@@ -24,7 +24,7 @@ jobs:
 
         - name: Get the commit hash
           id: hash
-          run: echo ::set-output name=tag::$(echo ${GITHUB_REF:10})
+          run: echo ::set-output name=tag::$(echo ${GITHUB_SHA:7})
 
         - name: Get current date
           id: date
