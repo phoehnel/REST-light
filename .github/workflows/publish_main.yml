@@ -41,5 +41,6 @@ jobs:
             --file Dockerfile 
             --push
             --build-arg APP_VERSION="${{ steps.date.outputs.date }}"
+            --build-arg GITHUB_REPOSITORY
             --tag "$IMAGE_NAME:${{ steps.date.outputs.date }}" 
             --tag "$IMAGE_NAME:latest" .
