@@ -126,8 +126,7 @@ def send():
 
     run_result = None
     try:
-        run_result = subprocess.run(["/opt/433Utils", 
-                                "send", 
+        run_result = subprocess.run(["/opt/433Utils/RPi_utils/send", 
                                 results['system_code'],
                                 results['unit_code'],
                                 results['state'] ], capture_output=True)
