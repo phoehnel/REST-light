@@ -19,9 +19,8 @@ RUN pip install -r "$APP_PATH/requirements.txt" \
 
 # Copy App
 COPY . $APP_PATH
-WORKDIR $APP_PATH
 
 # Run
 EXPOSE 4242
 ENTRYPOINT [ "python" ]
-CMD [ "rest-light.py" ]
+CMD [ "$APP_PATH/rest-light.py" ]
