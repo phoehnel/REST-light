@@ -4,7 +4,7 @@ LABEL authors="Pascal Höhnel"
 
 ARG APP_VERSION
 ENV APP_VERSION="$APP_VERSION"
-ENV APP_PATH="/etc/rest-light"
+ENV APP_PATH="/opt/rest-light"
 
 # get dependencies
 RUN mkdir -p /etc/rest-light \
@@ -22,5 +22,5 @@ RUN pip install -r "$APP_PATH/requirements.txt"
 
 # Run
 EXPOSE 4242
-ENTRYPOINT [ "python" ]
-CMD [ "$APP_PATH/rest-light.py" ]
+WORKDIR $APP_PATH
+CMD [ "python", "rest-light.py" ]
