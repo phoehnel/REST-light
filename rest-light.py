@@ -11,6 +11,7 @@ import sys
 import random
 
 app = Flask(__name__)
+DEBUG_MODE = False
 # Stores the currently valid api-key
 LOADED_API_KEY = None
 
@@ -26,11 +27,14 @@ paths = {
 ##################################################
 # setup logging on startup
 def setup_logging():
+    log_level = logging.WARN
+    if DEBUG_MODE:
+        log_level = logging.DEBUG
     root = logging.getLogger()
-    root.setLevel(logging.DEBUG)
+    root.setLevel(log_level)
 
     handler = logging.StreamHandler(sys.stdout)
-    handler.setLevel(logging.DEBUG)
+    handler.setLevel(log_level)
     formatter = logging.Formatter('%(asctime)s:%(levelname)s: %(message)s')
     handler.setFormatter(formatter)
     root.addHandler(handler)
@@ -193,4 +197,4 @@ if __name__ == '__main__':
     setup_logging()
     LOADED_API_KEY = load_key()
     # serve
-    app.run(debug=True, host='0.0.0.0', port=4242)
+    app.run(debug=DEBUG_MODE, host='0.0.0.0', port=4242)
