@@ -41,9 +41,6 @@ jobs:
           id: date
           run: echo "::set-output name=date::$(date +'%Y.%m.%d')"
 
-        - name: Pull image to leverage cache
-          run: docker pull "$IMAGE_NAME:DEV-latest"
-
         - name: Build the tagged Docker image
           run: > 
             docker buildx build 
