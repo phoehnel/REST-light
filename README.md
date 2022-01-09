@@ -9,6 +9,7 @@ The project is an API-Wrapper around the famous [443Utils](https://github.com/ni
 1. Install Docker on your RaspberryPi
 2. Attach a 433Mhz transmitter to [WiringPi Pin 2](https://pinout.xyz/pinout/pin13_gpio27) of your RaspberryPi
 3. Run REST-light and receive the generated API-Key from `docker logs` on first startup. 
+4. Try your first request! For an example, see section ["curl request example"](#curl-request-example)
 
 #### GPIO access
 
