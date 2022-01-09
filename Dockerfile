@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir  -r requirements.txt \
     && export BUILD_TOOLS="git make gcc g++" && export WIRINGPI_SUDO="" \
     && mkdir -p /etc/rest-light \
     && apt-get update \
-    && apt-get install -y --no-install-recommends $BUILD_TOOLS libstdc++6 libc6 frama-c-base \
+    && apt-get install -y --no-install-recommends $BUILD_TOOLS nginx libstdc++6 libc6 frama-c-base \
     && git clone --recursive -b "final_official_2.50" https://github.com/WiringPi/WiringPi.git /opt/wiringPi \
     && cd /opt/wiringPi && rm -rf .git && ./build \
     && git clone --recursive https://github.com/ninjablocks/433Utils.git /opt/433Utils \
@@ -30,7 +30,9 @@ RUN pip install --no-cache-dir  -r requirements.txt \
 
 # Copy App
 COPY . $APP_PATH
+COPY nginx.conf /etc/nginx
+RUN systemctl enable nginx
 
 # Run
 EXPOSE 4242
-CMD [ "python", "./rest-light.py" ]
+CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
