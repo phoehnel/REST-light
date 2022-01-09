@@ -16,6 +16,13 @@ jobs:
   build: 
     runs-on: ubuntu-latest
     steps:
+        - name: Update Docker Hub Description
+          uses: peter-evans/dockerhub-description@v2
+          with:
+            username: ${{ secrets.DOCKERHUB_USERNAME }}
+            password: ${{ secrets.DOCKERHUB_PASSWORD }}
+            repository: ${{IMAGE_NAME}}
+
         - name: Checkout project
           uses: actions/checkout@v2
 
