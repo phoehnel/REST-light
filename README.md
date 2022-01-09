@@ -51,6 +51,19 @@ curl http://127.0.0.1:4242/send \
     --data-urlencode "state=0" 
 ```
 
+## Security considerations
+
+Although this project was developed with current security best-practices in mind, it is still built around software
+which was not updated for at least 6 years. I would therefor strongly encourage you to only use this container on private & trusted networks and to never expose it to the internet.
+As the license implies, this software is provided without warranty of any kind.
+
+## Versioning & docker tags
+
+Use the docker tag `latest` to always get the latest stable image.
+
+The images are also tagged with the current date, so to pin to a static version, you can for example use the tag `2022.01.09`.
+
+Unstable/Development versions are prefixed with `DEV-` and should only be used for testing purposes.
 
 ## Contribution
 
