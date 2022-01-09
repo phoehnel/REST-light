@@ -25,8 +25,9 @@ jobs:
           uses: peter-evans/dockerhub-description@v2
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_PASSWORD }}
+            password: ${{ secrets.DOCKERHUB_DESC_PASSWORD }}
             repository: ${{ env.IMAGE_NAME }}
+            short-description: ${{ github.event.repository.description }}
 
         # - name: Set up QEMU
         #   uses: docker/setup-qemu-action@v1
