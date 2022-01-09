@@ -1,12 +1,10 @@
-# rest-light
+# REST-light
 
 ![REST-light Logo](./.doc/img/logo300px.png)
 
-REST-light is a simple microservice to control 433Mhz wireless sockets over HTTP, e.g. on a RaspberryPi.
+REST-light is a simple microservice to control 433Mhz wireless sockets over HTTP, e.g. on a RaspberryPi. The main usage is an easy integration of 433Mhz wireless sockets in SmartHome Tools like [openHAB](https://openhab.org) or [ioBroker](https://www.iobroker.net).
 
-It is a API-Wrapper around the famous [443Utils](https://github.com/ninjablocks/433Utils) project.
-
-The main usage is an easy integration of 433Mhz wireless sockets in SmartHome Tools like [openHAB](https://openhab.org) or [ioBroker](https://www.iobroker.net).
+The project is an API-Wrapper around the famous [443Utils](https://github.com/ninjablocks/433Utils) project.
 
 ## How to Use
 
@@ -27,7 +25,7 @@ version: "3.8"
 
 services:
   rest-light:
-    container_name: rest-light
+    container_name: REST-light
     image: "uupascal/rest-light:latest"
     restart: unless-stopped
     volumes:
@@ -42,8 +40,8 @@ services:
 ## Example Call
 
 ```
-curl http://127.0.0.1:4242/send \
-    --data-urlencode "api_key=Pg06Ju56SKhV5HqZxGkUIPs0qJ0u3JMUacg13YBS47" \
+curl http://192.168.0.26:4242/send \
+    --data-urlencode "api_key=e3hoCFBxU1hdcs3Gk2CxdA4eHIq1BGrN3v7Z2w9Twr" \
     --data-urlencode "unit_code=01000" \
     --data-urlencode "system_code=2" \
     --data-urlencode "state=0" 
@@ -52,4 +50,4 @@ curl http://127.0.0.1:4242/send \
 
 ## Credits
 
-The project relies on [443Utils](https://github.com/ninjablocks/433Utils) and is essentially a API-Wrapper around it.
+The project relies on [443Utils](https://github.com/ninjablocks/433Utils).
