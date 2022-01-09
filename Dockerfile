@@ -34,4 +34,4 @@ COPY nginx.conf /etc/nginx
 
 # Run
 EXPOSE 4242
-CMD [ "startup.sh" ]
+CMD [ "./startup.sh" ]
