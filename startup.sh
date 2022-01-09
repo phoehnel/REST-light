@@ -1,3 +1,2 @@
-#!/bin/bash
 service nginx start
-uwsgi --init uwsgi.ini
+uwsgi --ini uwsgi.ini
