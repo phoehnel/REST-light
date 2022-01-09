@@ -16,15 +16,16 @@ jobs:
   build: 
     runs-on: ubuntu-latest
     steps:
+        - name: Checkout project
+          uses: actions/checkout@v2
+
         - name: Update Docker Hub Description
           uses: peter-evans/dockerhub-description@v2
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_PASSWORD }}
-            repository: ${{IMAGE_NAME}}
-
-        - name: Checkout project
-          uses: actions/checkout@v2
+            password: ${{ secrets.DOCKERHUB_DESC_PASSWORD }}
+            repository: ${{ env.IMAGE_NAME }}
+            short-description: ${{ github.event.repository.description }}
 
         - name: Set up QEMU
           uses: docker/setup-qemu-action@v1

@@ -21,38 +21,30 @@ jobs:
         - name: Checkout project
           uses: actions/checkout@v2
 
-        - name: Update Docker Hub Description
-          uses: peter-evans/dockerhub-description@v2
-          with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_DESC_PASSWORD }}
-            repository: ${{ env.IMAGE_NAME }}
-            short-description: ${{ github.event.repository.description }}
+        - name: Set up QEMU
+          uses: docker/setup-qemu-action@v1
 
-        # - name: Set up QEMU
-        #   uses: docker/setup-qemu-action@v1
+        - name: Set up Docker Buildx
+          id: buildx
+          uses: docker/setup-buildx-action@v1
 
-        # - name: Set up Docker Buildx
-        #   id: buildx
-        #   uses: docker/setup-buildx-action@v1
+        - name: Login to DockerHub
+          run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-        # - name: Login to DockerHub
-        #   run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+        - name: Get current date
+          id: date
+          run: echo "::set-output name=date::$(date +'%Y.%m.%d')"
 
-        # - name: Get current date
-        #   id: date
-        #   run: echo "::set-output name=date::$(date +'%Y.%m.%d')"
+        - name: Pull image to leverage cache
+          run: docker pull "$IMAGE_NAME:DEV-latest"
 
-        # - name: Pull image to leverage cache
-        #   run: docker pull "$IMAGE_NAME:DEV-latest"
-
-        # - name: Build the tagged Docker image
-        #   run: > 
-        #     docker buildx build 
-        #     --platform linux/arm/v6 
-        #     --file Dockerfile 
-        #     --push
-        #     --build-arg APP_VERSION="DEV-${{ steps.date.outputs.date }}"
-        #     --build-arg GITHUB_REPOSITORY
-        #     --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}" 
-        #     --tag "$IMAGE_NAME:DEV-latest" .
+        - name: Build the tagged Docker image
+          run: > 
+            docker buildx build 
+            --platform linux/arm/v6 
+            --file Dockerfile 
+            --push
+            --build-arg APP_VERSION="DEV-${{ steps.date.outputs.date }}"
+            --build-arg GITHUB_REPOSITORY
+            --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}" 
+            --tag "$IMAGE_NAME:DEV-latest" .
