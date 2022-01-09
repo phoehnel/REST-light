@@ -37,10 +37,14 @@ services:
 ## Example Call
 
 ```
-curl http://192.168.0.45:4242/send --data-urlencode "api_key=KIvwKTFVMU9v7Bj8lpvD8fQ6sjxd19txv6DfGGupGN" --data-urlencode "unit_code=01000" --data-urlencode "system_code=2" --data-urlencode "state=0" 
+curl http://127.0.0.1:4242/send \
+    --data-urlencode "api_key=Pg06Ju56SKhV5HqZxGkUIPs0qJ0u3JMUacg13YBS47" \
+    --data-urlencode "unit_code=01000" \
+    --data-urlencode "system_code=2" \
+    --data-urlencode "state=0" 
 ```
 
 
 ## Credits
 
-The project relies on [443Utils](https://github.com/ninjablocks/433Utils)
+The project relies on [443Utils](https://github.com/ninjablocks/433Utils) and is essentially a API-Wrapper around it.

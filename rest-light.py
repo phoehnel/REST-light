@@ -11,88 +11,19 @@ import sys
 import random
 
 app = Flask(__name__)
-LOADED_API_KEY = None                          # Stores the current valid api-key
-basepath = "/etc/rest-light"
-api_key_path = basepath + "/api-key.txt"
+# Stores the currently valid api-key
+LOADED_API_KEY = None
+
+# important paths for the application
+paths = {
+    "base": "/etc/rest-light",
+    "433utils": "/opt/433Utils/RPi_utils",
+    "api_key": "/etc/rest-light/api-key.txt"
+}
 
 ##################################################
 # utility functions
 ##################################################
-# loads key on app startup
-def load_key():
-    # exit if key already defined
-    if LOADED_API_KEY is not None:
-        return
-
-    # try to open persistence file
-    key_tmp = None
-    try:
-        with open(api_key_path, 'r') as f:
-            lines = f.readlines()
-            key_tmp = re.findall("\w+", lines[0])[0]
-    except:
-        logging.info('No API-Key found, generating new one')
-
-    # return key
-    if key_tmp is not None:
-        return key_tmp
-    else:
-        new_key = ''.join(random.choices(
-            string.ascii_lowercase + string.ascii_uppercase + string.digits, k=42))
-        # persists key
-        try:
-            with open(api_key_path, 'w') as f:
-                f.write(new_key)
-        except:
-            logging.info('Could not save API-Key in the following folder. Ensure permissions are correct! ' + basepath)
-            sys.exit()
-
-        # return key and log
-        logging.warning('##################################################')
-        logging.warning('Generated API-Key: ' + new_key)
-        logging.warning('##################################################')
-        return new_key
-
-# function to check, if a provided api-key is valid
-def check_access(input_args):
-    if 'api_key' in input_args:
-        provided_key = sanitize_input(input_args['api_key'])
-        if provided_key == LOADED_API_KEY:
-            return (True, None)
-        else:
-            logging.warning('Request with wrong API-Key received')
-            return (False, { 'error': 'Wrong API-Key provided' })
-    else:
-        logging.warning('Request without API-Key received')
-        return (False, { 'error': 'No API-Key provided' })
-
-# function to reveive arguments from request
-def parse_request(input_args, required_arguments):
-    valid, error = check_access(input_args)
-    if not valid:
-        return (valid, error)
-
-    arguments = {}
-    for argument in required_arguments:
-        if argument in input_args:
-            arguments[argument] = sanitize_input(input_args[argument])
-        else:
-            logging.info('API-Request without mandory field ' + argument)
-            return (False, { 'error': 'Mandatory field ' + argument + ' not provided' })
-    
-    return (True, arguments)
-
-# function that generates a return dict for a completed subprocess 
-def parse_results(completed_process):
-    if completed_process is not None and completed_process.returncode == 0:
-        return { 'status': 'Success', 'stdout': completed_process.stdout }
-    elif completed_process is not None and 'stderr' in completed_process:
-        logging.error("Running of subprocess failed with output: " + run_result.stderr)
-        return { 'status': 'Error', 'stdout': completed_process.stdout, 'stdout': completed_process.stderr }
-    else:
-        logging.error("Running of subprocess failed without output")
-        return { 'status': 'Error', 'stdout': 'Could not run command!' }
-
 # setup logging on startup
 def setup_logging():
     root = logging.getLogger()
@@ -104,9 +35,114 @@ def setup_logging():
     handler.setFormatter(formatter)
     root.addHandler(handler)
 
+# loads key on app startup
+def load_key():
+    # exit if key already defined
+    if LOADED_API_KEY is not None:
+        return
+
+    # try to open persistence file
+    key_tmp = None
+    try:
+        with open(paths['api_key'], 'r') as f:
+            lines = f.readlines()
+            key_tmp = re.findall("\w+", lines[0])[0]
+    except FileNotFoundError as e:
+        logging.info('No API-Key found, generating new one')
+    except BaseException as e:
+        logging.fatal('Unkown exception when trying to load api-key! ' + str(e))
+
+    # return key
+    if key_tmp is not None:
+        return key_tmp
+    else:
+        new_key = ''.join(random.choices(
+            string.ascii_lowercase + string.ascii_uppercase + string.digits, k=42))
+        # persists key
+        try:
+            with open(paths['api_key'], 'w') as f:
+                f.write(new_key)
+        except BaseException as e:
+            logging.fatal(
+                'Could not save API-Key in the following folder. Ensure permissions are correct! ' + paths['base'])
+            logging.fatal(str(e))
+            sys.exit()
+
+        # return key and log
+        logging.warning('#'*60)
+        logging.warning('Generated API-Key: ' + new_key)
+        logging.warning('#'*60)
+        return new_key
+
+##################################################
+# Functions to handle requests
+##################################################
 # function that cleans input from possible injections
 def sanitize_input(input):
-    return re.findall("\w+", str(input))[0]
+    output = None
+    try: 
+        output = re.findall("\w+", str(input))[0]
+    except BaseException as e:
+            logging.error('Received unparsable web-request')
+            logging.error(str(e))
+    return output
+
+# function to check, if a provided api-key is valid
+def check_access(input_args):
+    if 'api_key' in input_args:
+        provided_key = sanitize_input(input_args['api_key'])
+        if provided_key == LOADED_API_KEY:
+            return (True, None)
+        else:
+            logging.warning('Request with wrong API-Key received')
+            return (False, {'error': 'Wrong API-Key provided'})
+    else:
+        logging.warning('Request without API-Key received')
+        return (False, {'error': 'No API-Key provided'})
+
+# function to reveive arguments from request
+def parse_request(input_args, required_arguments):
+    logging.debug(input_args.to_dict(flat=False))
+    valid, error = check_access(input_args)
+    if not valid:
+        return (valid, error)
+
+    arguments = {}
+    for argument in required_arguments:
+        if argument in input_args:
+            arguments[argument] = sanitize_input(input_args[argument])
+        else:
+            logging.info('API-Request without mandory field ' + argument)
+            return (False, {'error': 'Mandatory field ' + argument + ' not provided'})
+
+    return (True, arguments)
+
+# function that runs a OS-Subprocess and generates a return-dict 
+def run_command(arguments):
+    # Run Command and capture output
+    run_result = None
+    try:
+        run_result = subprocess.run(arguments, capture_output=True)
+    except subprocess.SubprocessError as e:
+        logging.fatal(
+            "Running of subprocess resulted in SubprocessError: " + str(e.output))
+        return {'status': 'Error', 'stdout': "Running of subprocess resulted in SubprocessError: " + str(e.output)}
+    except FileNotFoundError as e:
+        logging.fatal(
+            "Running of subprocess resulted in FileNotFoundError: " + str(e.strerror))
+        return {'status': 'Error', 'stdout': "Running of subprocess resulted in FileNotFoundError: " + str(e.strerror)}
+
+    # treat output
+    if run_result is not None and run_result.returncode == 0:
+        logging.debug("Successfully ran command: " + " ".join(arguments))
+        return {'status': 'Success', 'stdout': run_result.stdout}
+    elif run_result is not None and 'stderr' in run_result:
+        logging.error(
+            "Running of subprocess failed with output: " + run_result.stderr)
+        return {'status': 'Error', 'stdout': run_result.stdout, 'stdout': run_result.stderr}
+    else:
+        logging.error("Running of subprocess failed without output")
+        return {'status': 'Error', 'stdout': 'Could not run command!'}
 
 ##################################################
 # Flask routes
@@ -119,20 +155,26 @@ def hello():
 # api to switch sockets
 @app.route('/send', methods=['POST'])
 def send():
-    logging.info(request.form.to_dict(flat=False))
-    valid, results = parse_request(request.form, ['system_code', 'unit_code', 'state'])
-    if not valid:
-        return results
+    request_valid, parsed_request = parse_request(
+        request.form, ['system_code', 'unit_code', 'state'])
+    if not request_valid:
+        return parsed_request
 
-    run_result = None
-    try:
-        run_result = subprocess.run(["/opt/433Utils/RPi_utils/send", 
-                                results['system_code'],
-                                results['unit_code'],
-                                results['state'] ], capture_output=True)
-    except:
-        logging.error("Error in Subprocess Call")
-    return parse_results(run_result)
+    return run_command([paths['433utils'] + "/send",
+                        parsed_request['system_code'],
+                        parsed_request['unit_code'],
+                        parsed_request['state']])
+
+# api to send raw codes
+@app.route('/codesend', methods=['POST'])
+def codesend():
+    request_valid, parsed_request = parse_request(
+        request.form, ['decimalcode'])
+    if not request_valid:
+        return parsed_request
+
+    return run_command([paths['433utils'] + "/codesend",
+                        parsed_request['decimalcode']])
 
 
 ##################################################
