@@ -197,4 +197,6 @@ setup_logging()
 LOADED_API_KEY = load_key()
 # serve
 logging.info("Starting " + str(os.getenv('GITHUB_REPOSITORY')) + " " + str(os.getenv('APP_VERSION')))
-app.run(debug=DEBUG_MODE, host='0.0.0.0', port=4242)
+
+if __name__ == "__main__":
+    app.run(debug=DEBUG_MODE, host='0.0.0.0', port=4242)
