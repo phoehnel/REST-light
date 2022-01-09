@@ -1,0 +1,48 @@
+##################################################
+# General
+##################################################
+env:
+  IMAGE_NAME: uupascal/rest-light
+
+
+##################################################
+# On Release
+##################################################
+on:
+    release:
+        types: [published]
+
+jobs: 
+  build: 
+    runs-on: ubuntu-latest
+    steps:
+        - name: Checkout project
+          uses: actions/checkout@v2
+
+        - name: Set up QEMU
+          uses: docker/setup-qemu-action@v1
+
+        - name: Set up Docker Buildx
+          id: buildx
+          uses: docker/setup-buildx-action@v1
+
+        - name: Login to DockerHub
+          run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+        - name: Get current date
+          id: date
+          run: echo "::set-output name=date::$(date +'%Y.%m.%d')"
+
+        - name: Pull image to leverage cache
+          run: docker pull "$IMAGE_NAME:DEV-latest"
+
+        - name: Build the tagged Docker image
+          run: > 
+            docker buildx build 
+            --platform linux/amd64,linux/arm64,linux/arm/v7 
+            --file Dockerfile 
+            --push
+            --build-arg APP_VERSION="${{ steps.date.outputs.date }}"
+            --build-arg GITHUB_REPOSITORY
+            --tag "$IMAGE_NAME:${{ steps.date.outputs.date }}" 
+            --tag "$IMAGE_NAME:latest" .
