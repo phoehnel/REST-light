@@ -12,6 +12,11 @@ on:
   push:
     branches:
       - main
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.github/**'
+      - '.doc/**'
 
 jobs: 
   build: 
@@ -32,7 +37,7 @@ jobs:
           with:
             tag_name: ${{ steps.date.outputs.date }}
             release_name: ${{ steps.date.outputs.date }}
-            body: Automatically created release for pushs in main
+            body: "Automatically created release for push: in main ${{ github.event.head_commit.message }}"
             prerelease: true
 
         - name: Update Docker Hub Description
@@ -52,6 +57,9 @@ jobs:
 
         - name: Login to DockerHub
           run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
+
+        - name: Pull image to leverage cache
+          run: docker pull "$IMAGE_NAME:latest"
 
         - name: Build the tagged Docker image
           run: > 
