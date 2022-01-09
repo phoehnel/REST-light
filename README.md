@@ -8,7 +8,7 @@ The project is an API-Wrapper around the famous [443Utils](https://github.com/ni
 
 1. Install Docker on your RaspberryPi
 2. Attach a 433Mhz Sender to [WiringPi Pin 2](https://pinout.xyz/pinout/pin13_gpio27) of your RaspberryPi
-3. Run REST-light
+3. Run REST-light and receive the generated API-Key from `docker logs` on first startup. 
 
 #### GPIO access
 
@@ -20,7 +20,7 @@ From the ones available, i had the best experience using the "device-approach" a
 #### docker run
 
 ```ShellSession
-docker run -it --device /dev/gpiomem -p 4242:4242 uupascal/rest-light:DEV-latest
+docker run -it --device /dev/gpiomem -v <your-path>/rest-light:/etc/rest-light -p 4242:4242 uupascal/rest-light:DEV-latest
 ```
 
 #### docker-compose
@@ -33,7 +33,7 @@ services:
     image: "uupascal/rest-light:latest"
     restart: unless-stopped
     volumes:
-        - "%APP_DATA_PATH/rest-light:/etc/rest-light"
+        - "<your-path>/rest-light:/etc/rest-light"
     devices:
         - /dev/gpiomem
     ports:
@@ -44,13 +44,17 @@ services:
 ## Example Call
 
 ```
-curl http://192.168.0.26:4242/send \
-    --data-urlencode "api_key=Isep4GAyZRIujqhAG9w3HsmBPwcYa46o8IoKrK4IB1" \
-    --data-urlencode "unit_code=2" \
+curl http://127.0.0.1:4242/send \
+    --data-urlencode "api_key=<key from docker logs>" \
     --data-urlencode "system_code=10000" \
+    --data-urlencode "unit_code=2" \
     --data-urlencode "state=0" 
 ```
 
+
+## Contribution
+
+We love your input! For details see [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ## Credits
 
