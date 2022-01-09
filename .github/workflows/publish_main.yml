@@ -37,7 +37,7 @@ jobs:
           with:
             tag_name: ${{ steps.date.outputs.date }}
             release_name: ${{ steps.date.outputs.date }}
-            body: "Automatically created release for push: in main ${{ github.event.head_commit.message }}"
+            body: "Automatically created release for push in main: ${{ github.event.head_commit.message }}"
             prerelease: true
 
         - name: Update Docker Hub Description
