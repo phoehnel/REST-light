@@ -26,6 +26,9 @@ RUN export BUILD_TOOLS="git make gcc g++" && export WIRINGPI_SUDO="" \
     && rm -rf .git && cd "RPi_utils" && make all \
     && apt purge -y $BUILD_TOOLS && apt-get autoremove -y\
     && rm -rf /tmp/* /var/lib/apt/lists/* \
+    && chown -R root:www-data /opt/433Utils/RPi_utils/ \
+    && chmod -R 0755 /opt/433Utils/RPi_utils \
+    && chmod +s /opt/433Utils/RPi_utils/send && chmod +s /opt/433Utils/RPi_utils/codesend \
     && cd "$APP_PATH"
 
 # Copy App
