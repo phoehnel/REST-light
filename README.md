@@ -1,7 +1,10 @@
 # rest-light
-Simple Microservice to control 433Mhz wireless sockets over HTTP, e.g. on a RaspberryPi
 
+rest-light is a simple microservice to control 433Mhz wireless sockets over HTTP, e.g. on a RaspberryPi.
 
+It is a API-Wrapper around the famous [443Utils](https://github.com/ninjablocks/433Utils) project.
+
+The main usage is an easy integration of 433Mhz wireless sockets in SmartHome Tools like [openHAB](https://openhab.org) or [ioBroker](https://www.iobroker.net).
 
 ## How to Use
 
