@@ -24,7 +24,7 @@ RUN pip install --no-cache-dir  -r requirements.txt \
     && cd /opt/433Utils \
     && git reset --hard "31c0ea4e158287595a6f6116b6151e72691e1839" \
     && rm -rf .git && cd "RPi_utils" && make all \
-    && apt purge -y $BUILD_TOOLS && sudo apt-get autoremove -y\
+    && apt purge -y $BUILD_TOOLS && apt-get autoremove -y\
     && rm -rf /tmp/* /var/lib/apt/lists/* \
     && cd "$APP_PATH"
 
