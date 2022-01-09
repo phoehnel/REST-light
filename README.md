@@ -41,7 +41,7 @@ services:
 
 ```
 
-## Example Call
+## curl request example
 
 ```
 curl http://127.0.0.1:4242/send \
