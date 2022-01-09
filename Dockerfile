@@ -31,6 +31,7 @@ RUN export BUILD_TOOLS="git make gcc g++" && export WIRINGPI_SUDO="" \
 # Copy App
 COPY . $APP_PATH
 COPY nginx.conf /etc/nginx
+RUN chmod +x ./startup.sh
 
 # Run
 EXPOSE 4242
