@@ -6,6 +6,9 @@ The project is an API-Wrapper around the famous [443Utils](https://github.com/ni
 
 ## How to Use
 
+The setup is very simple. There is nothing to configure, except running the container. 
+For the app to be able to persist the API-Key, ensure the mounted volume is writeable for UID/GID 33.
+
 1. Install Docker on your RaspberryPi
 2. Attach a 433Mhz transmitter to [WiringPi Pin 2](https://pinout.xyz/pinout/pin13_gpio27) of your RaspberryPi
 3. Run REST-light and receive the generated API-Key from `docker logs` on first startup. 
@@ -21,7 +24,7 @@ From the ones available, i had the best experience using the "device-approach" a
 #### docker run
 
 ```ShellSession
-docker run -it --device /dev/gpiomem -v <your-path>/rest-light:/etc/rest-light -p 4242:4242 uupascal/rest-light:DEV-latest
+docker run -d --device /dev/gpiomem -v <your-path>/rest-light:/etc/rest-light -p 4242:4242 uupascal/rest-light:DEV-latest
 ```
 
 #### docker-compose
