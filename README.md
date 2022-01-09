@@ -1,4 +1,4 @@
-![REST-light Logo](https://github.com/uupascal/REST-light/.doc/img/logo300px.png)
+![REST-light Logo](https://github.com/uupascal/REST-light/blob/main/.doc/img/logo300px.png?raw=true)
 
 REST-light is a simple microservice to control 433Mhz wireless sockets over HTTP, e.g. on a RaspberryPi. The main usage is an easy integration of 433Mhz wireless sockets in SmartHome Tools like [openHAB](https://openhab.org) or [ioBroker](https://www.iobroker.net).
 
@@ -67,7 +67,7 @@ Unstable/Development versions are prefixed with `DEV-` and should only be used f
 
 ## Contribution
 
-We love your input! For details see [CONTRIBUTING.md](https://github.com/uupascal/REST-light/CONTRIBUTING.md)
+We love your input! For details see [CONTRIBUTING.md](https://github.com/uupascal/REST-light/blob/main/CONTRIBUTING.md)
 
 ## Credits
 
