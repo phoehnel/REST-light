@@ -50,6 +50,10 @@ curl http://127.0.0.1:4242/send \
     --data-urlencode "system_code=10000" \
     --data-urlencode "unit_code=2" \
     --data-urlencode "state=0" 
+
+curl http://127.0.0.1:4242/codesend \
+    --data-urlencode "api_key=<key from docker logs>" \
+    --data-urlencode "decimalcode=500000"
 ```
 
 ## Security considerations
