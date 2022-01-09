@@ -22,7 +22,7 @@ jobs:
           with:
             username: ${{ secrets.DOCKERHUB_USERNAME }}
             password: ${{ secrets.DOCKERHUB_PASSWORD }}
-            repository: $IMAGE_NAME
+            repository: ${{ env.IMAGE_NAME }}
 
         # - name: Checkout project
         #   uses: actions/checkout@v2
