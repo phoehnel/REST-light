@@ -132,18 +132,25 @@ def run_command(arguments):
         logging.fatal(
             "Running of subprocess resulted in FileNotFoundError: " + str(e.strerror))
         return {'status': 'Error', 'stdout': "Running of subprocess resulted in FileNotFoundError: " + str(e.strerror)}
+    except BaseException as e:
+        logging.fatal('Unkown exception when trying to run subprocess! ' + str(e))
+        return {'status': 'Error', 'stdout': 'Unkown exception when trying to run subprocess! ' + str(e)}
 
     # treat output
-    if run_result is not None and run_result.returncode == 0:
-        logging.debug("Successfully ran command: " + " ".join(arguments))
-        return {'status': 'Success', 'stdout': run_result.stdout}
-    elif run_result is not None and 'stderr' in run_result:
-        logging.error(
-            "Running of subprocess failed with output: " + run_result.stderr)
-        return {'status': 'Error', 'stdout': run_result.stdout, 'stdout': run_result.stderr}
-    else:
-        logging.error("Running of subprocess failed without output")
-        return {'status': 'Error', 'stdout': 'Could not run command!'}
+    try:
+        if run_result is not None and run_result.returncode == 0:
+            logging.debug("Successfully ran command: " + " ".join(arguments))
+            return {'status': 'Success', 'stdout': str(run_result.stdout) }
+        elif run_result is not None and 'stderr' in run_result:
+            logging.error(
+                "Running of subprocess failed with output: " + str(run_result.stderr))
+            return {'status': 'Error', 'stdout': str(run_result.stdout), 'stdout': str(run_result.stderr) }
+        else:
+            logging.error("Running of subprocess failed without output")
+            return {'status': 'Error', 'stdout': 'Could not run command!'}
+    except BaseException as e:
+        logging.fatal('Unkown exception when trying to parse subprocess output! ' + str(e))
+        return {'status': 'Error', 'stdout': 'Unkown exception when trying to parse subprocess output! ' + str(e)}
 
 ##################################################
 # Flask routes
