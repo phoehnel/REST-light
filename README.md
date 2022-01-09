@@ -1,5 +1,3 @@
-# REST-light
-
 ![REST-light Logo](./.doc/img/logo300px.png)
 
 REST-light is a simple microservice to control 433Mhz wireless sockets over HTTP, e.g. on a RaspberryPi. The main usage is an easy integration of 433Mhz wireless sockets in SmartHome Tools like [openHAB](https://openhab.org) or [ioBroker](https://www.iobroker.net).
@@ -7,6 +5,12 @@ REST-light is a simple microservice to control 433Mhz wireless sockets over HTTP
 The project is an API-Wrapper around the famous [443Utils](https://github.com/ninjablocks/433Utils) project.
 
 ## How to Use
+
+1. Install Docker on your RaspberryPi
+2. Attach a 433Mhz Sender to [WiringPi Pin 2](https://pinout.xyz/pinout/pin13_gpio27) of your RaspberryPi
+3. Run REST-light
+
+#### GPIO access
 
 For the app to be able to use the Pi's GPIO-PINs, they need to be exposed to the container.
 There are multiple options to do this, as explained [here](https://stackoverflow.com/a/48234752/8069229).
@@ -41,9 +45,9 @@ services:
 
 ```
 curl http://192.168.0.26:4242/send \
-    --data-urlencode "api_key=e3hoCFBxU1hdcs3Gk2CxdA4eHIq1BGrN3v7Z2w9Twr" \
-    --data-urlencode "unit_code=01000" \
-    --data-urlencode "system_code=2" \
+    --data-urlencode "api_key=Isep4GAyZRIujqhAG9w3HsmBPwcYa46o8IoKrK4IB1" \
+    --data-urlencode "unit_code=2" \
+    --data-urlencode "system_code=10000" \
     --data-urlencode "state=0" 
 ```
 
