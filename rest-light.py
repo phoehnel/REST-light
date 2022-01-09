@@ -27,7 +27,7 @@ paths = {
 ##################################################
 # setup logging on startup
 def setup_logging():
-    log_level = logging.WARN
+    log_level = logging.INFO
     if DEBUG_MODE:
         log_level = logging.DEBUG
     root = logging.getLogger()
@@ -192,9 +192,9 @@ def codesend():
 ##################################################
 # Main call
 ##################################################
-if __name__ == '__main__':
-    # init
-    setup_logging()
-    LOADED_API_KEY = load_key()
-    # serve
-    app.run(debug=DEBUG_MODE, host='0.0.0.0', port=4242)
+# init
+setup_logging()
+LOADED_API_KEY = load_key()
+# serve
+logging.info("Starting " + str(os.getenv('GITHUB_REPOSITORY')) + " " + str(os.getenv('APP_VERSION')))
+app.run(debug=DEBUG_MODE, host='0.0.0.0', port=4242)
