@@ -145,7 +145,7 @@ def run_command(arguments):
         if run_result is not None and run_result.returncode == 0:
             logging.debug("Successfully ran command: " + " ".join(arguments))
             return {'status': 'Success', 'stdout': str(run_result.stdout) }
-        elif run_result is not None and 'stderr' in run_result:
+        elif run_result is not None and hasattr(run_result, 'stderr'):
             logging.error(
                 "Running of subprocess failed with output: " + str(run_result.stderr))
             return {'status': 'Error', 'stdout': str(run_result.stdout), 'stdout': str(run_result.stderr) }
