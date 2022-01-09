@@ -31,8 +31,7 @@ RUN export BUILD_TOOLS="git make gcc g++" && export WIRINGPI_SUDO="" \
 # Copy App
 COPY . $APP_PATH
 COPY nginx.conf /etc/nginx
-RUN service nginx enable
 
 # Run
 EXPOSE 4242
-CMD [ "uwsgi", "--ini", "uwsgi.ini" ]
+CMD [ "startup.sh" ]
