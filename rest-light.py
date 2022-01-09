@@ -74,9 +74,9 @@ def load_key():
             sys.exit()
 
         # return key and log
-        logging.warning('#'*60)
-        logging.warning('Generated API-Key: ' + new_key)
-        logging.warning('#'*60)
+        logging.warning('#'*72)
+        logging.warning('#   Generated API-Key: ' + new_key)
+        logging.warning('#'*72)
         return new_key
 
 ##################################################
@@ -143,17 +143,17 @@ def run_command(arguments):
     # treat output
     try:
         if run_result is not None and run_result.returncode == 0:
-            logging.debug("Successfully ran command: " + " ".join(arguments))
+            logging.info("Successfully ran command: " + " ".join(arguments))
             return {'status': 'Success', 'stdout': str(run_result.stdout) }
         elif run_result is not None and hasattr(run_result, 'stderr'):
             logging.error(
-                "Running of subprocess failed with output: " + str(run_result.stderr))
+                "Running of command " + " ".join(arguments) + " failed with output: " + str(run_result.stderr))
             return {'status': 'Error', 'stdout': str(run_result.stdout), 'stdout': str(run_result.stderr) }
         else:
-            logging.error("Running of subprocess failed without output")
+            logging.error("Running of command " + " ".join(arguments) + " failed without output")
             return {'status': 'Error', 'stdout': 'Could not run command!'}
     except BaseException as e:
-        logging.fatal('Unkown exception when trying to parse subprocess output! ' + str(e))
+        logging.fatal('Unkown exception when trying to parse command " + " ".join(arguments) + " output! ' + str(e))
         return {'status': 'Error', 'stdout': 'Unkown exception when trying to parse subprocess output! ' + str(e)}
 
 ##################################################
