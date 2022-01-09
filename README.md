@@ -69,7 +69,7 @@ As the license implies, this software is provided without warranty of any kind.
 
 Use the docker tag `latest` to always get the latest stable image.
 
-The images are also tagged with the current date, so to pin to a static version, you can for example use the tag `2022.01.09`.
+The images are also tagged with the current timestamp, so to pin to a static version, you can for example use the tag `2022.01.09-1746`.
 
 Unstable/Development versions are prefixed with `DEV-` and should only be used for testing purposes.
 

@@ -3,18 +3,17 @@ FROM python:3-slim-buster
 LABEL authors="Pascal Höhnel"
 
 # Arguments from Build-Pipeline to display Version
-ARG APP_VERSION
-ARG GITHUB_REPOSITORY
-ENV APP_VERSION="$APP_VERSION"
-ENV GITHUB_REPOSITORY="$GITHUB_REPOSITORY"
+ARG APP_VERSION="DEV"
+ARG GITHUB_REPOSITORY="uupascal/REST-light"
+
 # Set App-Path and cd
 ENV APP_PATH="/opt/rest-light"
 WORKDIR $APP_PATH
 
-# get dependencies
+# install dependencies & prepare persistance-folder
 COPY requirements.txt ./
 RUN export BUILD_TOOLS="git make gcc g++" && export WIRINGPI_SUDO="" \
-    && mkdir -p /etc/rest-light \
+    && mkdir -p /etc/rest-light && chown -R www-data:www-data /etc/rest-light \
     && apt-get update \
     && apt-get install -y --no-install-recommends $BUILD_TOOLS nginx libstdc++6 libc6 frama-c-base \
     && pip install --no-cache-dir  -r requirements.txt \
@@ -34,8 +33,14 @@ RUN export BUILD_TOOLS="git make gcc g++" && export WIRINGPI_SUDO="" \
 # Copy App
 COPY . $APP_PATH
 COPY nginx.conf /etc/nginx
-RUN chmod +x ./startup.sh
+RUN chmod +x ./startup.sh && chown -R www-data:www-data .
 
+# persist version variables in correct user
+USER www-data
+ENV APP_VERSION="$APP_VERSION"
+ENV GITHUB_REPOSITORY="$GITHUB_REPOSITORY"
+
+USER root
 # Run
 EXPOSE 4242
 CMD [ "./startup.sh" ]
