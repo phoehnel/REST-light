@@ -55,6 +55,7 @@ def load_key():
     # return key
     if key_tmp is not None:
         return key_tmp
+    # generate new key
     else:
         new_key = ''.join(random.choices(
             string.ascii_lowercase + string.ascii_uppercase + string.digits, k=42))
