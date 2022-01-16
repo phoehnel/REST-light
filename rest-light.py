@@ -106,8 +106,14 @@ def check_access(input_args):
         return (False, {'error': 'No API-Key provided'})
 
 # function to reveive arguments from request
-def parse_request(input_args, required_arguments):
-    logging.debug(input_args.to_dict(flat=False))
+def parse_request(request, required_arguments):
+    input_args = None
+    if request.is_json:
+        input_args = request.get_json()
+        logging.debug(input_args)
+    else:
+        input_args = request.form
+        logging.debug(input_args.to_dict(flat=False))
     valid, error = check_access(input_args)
     if not valid:
         return (valid, error)
@@ -168,7 +174,7 @@ def hello():
 @app.route('/send', methods=['POST'])
 def send():
     request_valid, parsed_request = parse_request(
-        request.form, ['system_code', 'unit_code', 'state'])
+        request, ['system_code', 'unit_code', 'state'])
     if not request_valid:
         return parsed_request
 
@@ -181,7 +187,7 @@ def send():
 @app.route('/codesend', methods=['POST'])
 def codesend():
     request_valid, parsed_request = parse_request(
-        request.form, ['decimalcode'])
+        request, ['decimalcode'])
     if not request_valid:
         return parsed_request
 
