@@ -4,6 +4,18 @@ REST-light is a simple microservice to control 433Mhz wireless sockets over HTTP
 
 The project is an API-Wrapper around the famous [443Utils](https://github.com/ninjablocks/433Utils) project.
 
+
+- [How to Use](#how-to-use)
+    + [GPIO access](#gpio-access)
+    + [docker run](#docker-run)
+    + [docker-compose](#docker-compose)
+- [curl request example](#curl-request-example)
+- [OpenHAB integration example](#openhab-integration-example)
+- [Security considerations](#security-considerations)
+- [Versioning & docker tags](#versioning---docker-tags)
+- [Contribution](#contribution)
+- [Credits](#credits)
+
 ## How to Use
 
 The setup is very simple. There is nothing to configure, except running the container. 
@@ -57,6 +69,58 @@ curl http://127.0.0.1:4242/send \
 curl http://127.0.0.1:4242/codesend \
     --data-urlencode "api_key=<key from docker logs>" \
     --data-urlencode "decimalcode=500000"
+```
+
+## OpenHAB integration example
+
+In this example, new devices can be added by simply adding a switch to the group `gREST_light`, whichs name is in the format
+`example_<SYSTEM_CODE>_<UNIT_CODE>`.
+
+The included rule receives the values from the item name, as soon as any item in the group is triggered.
+
+__RESTlight.items__
+```
+Group:Switch:OR(OFF, ON)    gREST_light                 "REST-light"    <light>                            ["Location"]
+
+Switch                      RESTLight_10000_1           "Light"         <light>   (mygroup, gREST_light)   ["Switch"]
+Switch                      RESTLight_01000_3           "Light2"        <light>   (mygroup, gREST_light)   ["Switch"]
+Switch                      RESTLight_00100_3           "Light3"        <light>   (mygroup, gREST_light)   ["Switch"]
+```
+
+__RESTlight.rules__
+```
+rule "REST_light"
+  when
+    Member of gREST_light received command
+  then
+    logInfo("REST_light", "Member " + triggeringItem.name + " to " + receivedCommand)
+
+    try {
+      // receive system & unit code from item name
+      val sys_num = triggeringItem.name.toString.split("_").get(1)
+      val unit_num = triggeringItem.name.toString.split("_").get(2)
+
+      var String state = ""
+      if(receivedCommand == ON) {
+        state = "1"
+      } if(receivedCommand == OFF) {
+        state = "0"
+      }
+
+      var String jsonstring = (
+              '{"api_key" : "<INSERT KEY HERE>", "system_code" : "' + 
+              sys_num + '", "unit_code" : "' + unit_num + '", "state" : "' + state + '"}'
+      )
+
+      sendHttpPostRequest("http://<INSERT IP HERE>:4242/send", "application/json", jsonstring.toString, 5000)
+      logInfo("REST_light", jsonstring.toString)
+      logInfo("REST_light", "Finished command!")
+
+    } catch(Throwable t) {
+      logInfo("REST_light", "Caught exception during attempt to contact REST_light API!")
+    }
+end
+
 ```
 
 ## Security considerations
