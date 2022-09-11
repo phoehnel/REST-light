@@ -34,6 +34,15 @@ services:
 
 ```
 
+### Compatible Boards
+
+The following versions are availible:
+
+|Board|Library in Use|Docker image tag|
+|--|--|--|
+|Raspberry Pi|[WiringPi-Library](https://github.com/WiringPi/WiringPi))|`<version>-rpi` or `latest`|
+|Banana Pi|[WiringPi-Library](https://github.com/BPI-SINOVOIP/BPI-WiringPi2)|`<version>-bpi`|
+
 ## Example Call
 
 ```

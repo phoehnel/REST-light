@@ -37,6 +37,18 @@ jobs:
         - name: Pull image to leverage cache
           run: docker pull "$IMAGE_NAME:DEV-latest" || true
 
+        - name: Build the tagged Docker image for bananpi pi
+          run: > 
+            docker buildx build 
+            --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 
+            --file Dockerfile 
+            --push
+            --build-arg APP_VERSION="DEV-${{ steps.date.outputs.date }}"
+            --build-arg GITHUB_REPOSITORY
+            --build-arg "CLONE_COMMAND_WIRING_PI=git clone --recursive -b feature/update-to-latest-upstream https://github.com/uupascal/BPI-WiringPi2.git /opt/wiringPi"
+            --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}-bpi" 
+            --tag "$IMAGE_NAME:DEV-latest-bpi" .
+
         - name: Build the tagged Docker image for raspberry pi
           run: > 
             docker buildx build 
@@ -51,16 +63,3 @@ jobs:
             --tag "$IMAGE_NAME:DEV-latest-rpi"
             --tag "$IMAGE_NAME:DEV-latest" .
 
-        - name: Build the tagged Docker image for bananpi pi
-          run: > 
-            docker buildx build 
-            --platform linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 
-            --file Dockerfile 
-            --push
-            --build-arg APP_VERSION="DEV-${{ steps.date.outputs.date }}"
-            --build-arg GITHUB_REPOSITORY
-            --build-arg "CLONE_COMMAND_WIRING_PI=git clone --recursive https://github.com/BPI-SINOVOIP/BPI-WiringPi2 /opt/wiringPi"
-            --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}" 
-            --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}-bpi" 
-            --tag "$IMAGE_NAME:DEV-latest-bpi"
-            --tag "$IMAGE_NAME:DEV-latest" .
