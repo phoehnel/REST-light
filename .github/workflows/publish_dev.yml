@@ -45,7 +45,7 @@ jobs:
             --push
             --build-arg APP_VERSION="DEV-${{ steps.date.outputs.date }}"
             --build-arg GITHUB_REPOSITORY
-            --build-arg "CLONE_COMMAND_WIRING_PI=git clone --recursive -b final_official_2.50 https://github.com/WiringPi/WiringPi.git /opt/wiringPi"
+            --build-arg "CLONE_COMMAND_WIRING_PI=git clone --recursive -b 2.61-1 https://github.com/WiringPi/WiringPi.git /opt/wiringPi"
             --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}" 
             --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}-rpi" 
             --tag "$IMAGE_NAME:DEV-latest-rpi"
