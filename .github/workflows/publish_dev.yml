@@ -12,7 +12,12 @@ on:
   push:
     branches:
       - dev
-
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+      - '.github/**'
+      - '.doc/**'
+      
 jobs: 
   build: 
     runs-on: ubuntu-latest
