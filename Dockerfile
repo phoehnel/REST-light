@@ -11,11 +11,7 @@ ENV GITHUB_REPOSITORY="$GITHUB_REPOSITORY"
 # Argument to switch wiringPi-Version during build for different boards
 ARG CLONE_COMMAND_WIRING_PI
 
-# Other Env-Variables
-ENV BUILD_TOOLS="git make gcc g++"
 ENV APP_PATH="/opt/rest-light"
-ENV WIRINGPI_SUDO=""
-
 WORKDIR $APP_PATH
 
 # install dependencies & prepare persistance-folder
