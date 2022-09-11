@@ -4,6 +4,7 @@ LABEL authors="Pascal Höhnel"
 
 ARG APP_VERSION
 ARG GITHUB_REPOSITORY
+ARG CLONE_COMMAND_WIRING_PI
 ENV APP_VERSION="$APP_VERSION"
 ENV GITHUB_REPOSITORY="$GITHUB_REPOSITORY"
 ENV BUILD_TOOLS="git make gcc g++"
@@ -18,7 +19,7 @@ RUN pip install --no-cache-dir  -r requirements.txt \
     && mkdir -p /etc/rest-light \
     && apt-get update \
     && apt-get install -y --no-install-recommends $BUILD_TOOLS libstdc++6 libc6 frama-c-base \
-    && git clone --recursive -b "final_official_2.50" https://github.com/WiringPi/WiringPi.git /opt/wiringPi \
+    && $CLONE_COMMAND_WIRING_PI \
     && cd /opt/wiringPi && rm -rf .git && ./build \
     && git clone --recursive https://github.com/ninjablocks/433Utils.git /opt/433Utils \
     && cd /opt/433Utils \
