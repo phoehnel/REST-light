@@ -48,7 +48,7 @@ jobs:
             --build-arg "CLONE_COMMAND_WIRING_PI=git clone --recursive -b final_official_2.50 https://github.com/WiringPi/WiringPi.git /opt/wiringPi"
             --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}" 
             --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}-rpi" 
-            --tag "$IMAGE_NAME:DEV-latest-rpi 
+            --tag "$IMAGE_NAME:DEV-latest-rpi"
             --tag "$IMAGE_NAME:DEV-latest" .
 
         - name: Build the tagged Docker image for bananpi pi
@@ -62,5 +62,5 @@ jobs:
             --build-arg "CLONE_COMMAND_WIRING_PI=git clone --recursive https://github.com/BPI-SINOVOIP/BPI-WiringPi2 /opt/wiringPi"
             --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}" 
             --tag "$IMAGE_NAME:DEV-${{ steps.date.outputs.date }}-bpi" 
-            --tag "$IMAGE_NAME:DEV-latest-bpi 
+            --tag "$IMAGE_NAME:DEV-latest-bpi"
             --tag "$IMAGE_NAME:DEV-latest" .
