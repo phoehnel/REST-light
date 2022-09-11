@@ -2,18 +2,23 @@ FROM python:3-slim-bullseye
 
 LABEL authors="Pascal Höhnel"
 
-ARG APP_VERSION
-ARG GITHUB_REPOSITORY
-ARG CLONE_COMMAND_WIRING_PI
+# Arguments from Build-Pipeline to display Version
+ARG APP_VERSION="DEV"
 ENV APP_VERSION="$APP_VERSION"
+ARG GITHUB_REPOSITORY="uupascal/REST-light"
 ENV GITHUB_REPOSITORY="$GITHUB_REPOSITORY"
+
+# Argument to switch wiringPi-Version during build for different boards
+ARG CLONE_COMMAND_WIRING_PI
+
+# Other Env-Variables
 ENV BUILD_TOOLS="git make gcc g++"
 ENV APP_PATH="/opt/rest-light"
 ENV WIRINGPI_SUDO=""
 
 WORKDIR $APP_PATH
 
-# get dependencies
+# install dependencies & prepare persistance-folder
 COPY requirements.txt ./
 RUN pip install --no-cache-dir  -r requirements.txt \
     && mkdir -p /etc/rest-light \
@@ -31,7 +36,15 @@ RUN pip install --no-cache-dir  -r requirements.txt \
 
 # Copy App
 COPY . $APP_PATH
+COPY nginx.conf /etc/nginx
+RUN chmod +x ./startup.sh && chown -R www-data:www-data .
 
+# persist version variables in correct user
+USER www-data
+ENV APP_VERSION="$APP_VERSION"
+ENV GITHUB_REPOSITORY="$GITHUB_REPOSITORY"
+
+USER root
 # Run
 EXPOSE 4242
-CMD [ "python", "./rest-light.py" ]
+CMD [ "./startup.sh" ]
