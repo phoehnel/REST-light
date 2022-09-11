@@ -58,10 +58,6 @@ jobs:
         - name: Login to DockerHub
           run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
 
-        - name: Get current date
-          id: date
-          run: echo "::set-output name=date::$(date +'%Y.%m.%d')"
-
         - name: Pull image to leverage cache
           run: docker pull "$IMAGE_NAME:DEV-latest" || true
 
