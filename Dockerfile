@@ -1,4 +1,4 @@
-FROM python:3-slim-buster
+FROM python:3-slim-bullseye
 
 LABEL authors="Pascal Höhnel"
 
