@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 ##################################################
 # Imports & Global variables
 ##################################################
@@ -106,7 +107,7 @@ def check_access(input_args):
         return (False, {'error': 'No API-Key provided'})
 
 # function to reveive arguments from request
-def parse_request(request, required_arguments):
+def parse_request(request, required_arguments, optional_arguments = []):
     input_args = None
     if request.is_json:
         input_args = request.get_json()
@@ -119,10 +120,10 @@ def parse_request(request, required_arguments):
         return (valid, error)
 
     arguments = {}
-    for argument in required_arguments:
+    for argument in required_arguments + optional_arguments:
         if argument in input_args:
             arguments[argument] = sanitize_input(input_args[argument])
-        else:
+        elif argument not in input_args and argument in required_arguments:
             logging.info('API-Request without mandory field ' + argument)
             return (False, {'error': 'Mandatory field ' + argument + ' not provided'})
 
@@ -187,12 +188,15 @@ def send():
 @app.route('/codesend', methods=['POST'])
 def codesend():
     request_valid, parsed_request = parse_request(
-        request, ['decimalcode'])
+        request, ['decimalcode'], ['protocol', 'pulselength', 'bitlength'])
     if not request_valid:
         return parsed_request
 
     return run_command([paths['433utils'] + "/codesend",
-                        parsed_request['decimalcode']])
+                        parsed_request['decimalcode'],
+                        parsed_request['protocol'] if 'protocol' in parsed_request else "",
+                        parsed_request['pulselength'] if 'pulselength' in parsed_request else "",
+                        parsed_request['bitlength'] if 'bitlength' in parsed_request else "" ])
 
 
 ##################################################

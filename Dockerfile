@@ -21,7 +21,7 @@ RUN export BUILD_TOOLS="git make gcc g++" && export WIRINGPI_SUDO="" \
     && cd /opt/wiringPi && rm -rf .git && ./build \
     && git clone --recursive https://github.com/ninjablocks/433Utils.git /opt/433Utils \
     && cd /opt/433Utils \
-    && git reset --hard "31c0ea4e158287595a6f6116b6151e72691e1839" \
+    && git reset --hard "755cec14a7e16604f214beef2dcad8dbd09de324" \
     && rm -rf .git && cd "RPi_utils" && make all \
     && apt purge -y $BUILD_TOOLS && apt-get autoremove -y\
     && rm -rf /tmp/* /var/lib/apt/lists/* \
