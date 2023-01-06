@@ -68,7 +68,10 @@ curl http://127.0.0.1:4242/send \
 
 curl http://127.0.0.1:4242/codesend \
     --data-urlencode "api_key=<key from docker logs>" \
-    --data-urlencode "decimalcode=500000"
+    --data-urlencode "decimalcode=500000" \
+    --data-urlencode "protocol=optional" \
+    --data-urlencode "pulselength=optional" \
+    --data-urlencode "bitlength=optional"
 ```
 
 ## OpenHAB integration example
