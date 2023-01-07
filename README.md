@@ -10,7 +10,8 @@ The project is an API-Wrapper around the famous [443Utils](https://github.com/ni
     + [docker run](#docker-run)
     + [docker-compose](#docker-compose)
 - [curl request example](#curl-request-example)
-- [OpenHAB integration example](#openhab-integration-example)
+- [OpenHAB integration example for the `send` binary](#openhab-integration-example-for-the--send--binary)
+- [OpenHAB integration example for the `codesend` binary](#openhab-integration-example-for-the--codesend--binary)
 - [Security considerations](#security-considerations)
 - [Versioning & docker tags](#versioning---docker-tags)
 - [Contribution](#contribution)
@@ -74,7 +75,7 @@ curl http://127.0.0.1:4242/codesend \
     --data-urlencode "bitlength=optional"
 ```
 
-## OpenHAB integration example
+## OpenHAB integration example for the `send` binary
 
 In this example, new devices can be added by simply adding a switch to the group `gREST_light`, whichs name is in the format
 `example_<SYSTEM_CODE>_<UNIT_CODE>`.
@@ -116,6 +117,55 @@ rule "REST_light"
       )
 
       sendHttpPostRequest("http://<INSERT IP HERE>:4242/send", "application/json", jsonstring.toString, 5000)
+      logInfo("REST_light", jsonstring.toString)
+      logInfo("REST_light", "Finished command!")
+
+    } catch(Throwable t) {
+      logInfo("REST_light", "Caught exception during attempt to contact REST_light API!")
+    }
+end
+
+```
+
+## OpenHAB integration example for the `codesend` binary
+
+In this example, new devices can be added by simply adding a switch to the group `gREST_light`, whichs name is in the format
+`example_<DECIMALCODE FOR ON>_<DECIMALCODE FOR OFF>`.
+
+The included rule receives the values from the item name, as soon as any item in the group is triggered.
+
+__RESTlight.items__
+```
+Group:Switch:OR(OFF, ON)    gREST_light                 "REST-light"    <light>                            ["Location"]
+
+Switch                      RESTLight_10000_1           "Light"         <light>   (mygroup, gREST_light)   ["Switch"]
+Switch                      RESTLight_01000_3           "Light2"        <light>   (mygroup, gREST_light)   ["Switch"]
+Switch                      RESTLight_00100_3           "Light3"        <light>   (mygroup, gREST_light)   ["Switch"]
+```
+
+__RESTlight.rules__
+```
+rule "REST_light"
+  when
+    Member of gREST_light received command
+  then
+    logInfo("REST_light", "Member " + triggeringItem.name + " to " + receivedCommand)
+
+    try {
+      // receive decimal codes from item name, e.g. zap_1234567_2345678_key1
+      var decimal_code = ""
+      if(receivedCommand == ON) {
+        decimal_code = triggeringItem.name.toString.split("_").get(1)
+      } if(receivedCommand == OFF) {
+        decimal_code = triggeringItem.name.toString.split("_").get(2)
+      }
+      
+      var protocol = "1"
+      var pulselength = "150"
+        
+      var String jsonstring = ('{"api_key" : "<INSERT KEY HERE>", "decimalcode" : "' + decimal_code + '", "protocol" : "' + protocol + '", "pulselength" : "' + pulselength + '"}')
+	  
+      sendHttpPostRequest("http://<INSERT IP HERE>:4242/codesend", "application/json", jsonstring.toString, 5000)
       logInfo("REST_light", jsonstring.toString)
       logInfo("REST_light", "Finished command!")
 
