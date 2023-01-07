@@ -1,14 +1,15 @@
+#!/usr/bin/env python3
 ##################################################
 # Imports & Global variables
 ##################################################
-from flask import Flask, request
+import random
+import sys
+import subprocess
 import os
 import logging
 import re
 import string
-import subprocess
-import sys
-import random
+from flask import Flask, request
 
 app = Flask(__name__)
 DEBUG_MODE = False
@@ -85,11 +86,11 @@ def load_key():
 # function that cleans input from possible injections
 def sanitize_input(input):
     output = None
-    try: 
+    try:
         output = re.findall("\w+", str(input))[0]
     except BaseException as e:
-            logging.error('Received unparsable web-request')
-            logging.error(str(e))
+        logging.error('Received unparsable web-request')
+        logging.error(str(e))
     return output
 
 # function to check, if a provided api-key is valid
@@ -106,7 +107,7 @@ def check_access(input_args):
         return (False, {'error': 'No API-Key provided'})
 
 # function to reveive arguments from request
-def parse_request(request, required_arguments):
+def parse_request(request, required_arguments, optional_arguments = []):
     input_args = None
     if request.is_json:
         input_args = request.get_json()
@@ -119,16 +120,16 @@ def parse_request(request, required_arguments):
         return (valid, error)
 
     arguments = {}
-    for argument in required_arguments:
+    for argument in required_arguments + optional_arguments:
         if argument in input_args:
             arguments[argument] = sanitize_input(input_args[argument])
-        else:
+        elif argument not in input_args and argument in required_arguments:
             logging.info('API-Request without mandory field ' + argument)
             return (False, {'error': 'Mandatory field ' + argument + ' not provided'})
 
     return (True, arguments)
 
-# function that runs a OS-Subprocess and generates a return-dict 
+# function that runs a OS-Subprocess and generates a return-dict
 def run_command(arguments):
     # Run Command and capture output
     run_result = None
@@ -137,14 +138,17 @@ def run_command(arguments):
     except subprocess.SubprocessError as e:
         logging.fatal(
             "Running of subprocess resulted in SubprocessError: " + str(e.output))
-        return {'status': 'Error', 'stdout': "Running of subprocess resulted in SubprocessError: " + str(e.output)}
+        return {'status': 'Error',
+                'stdout': "Running of subprocess resulted in SubprocessError: " + str(e.output)}
     except FileNotFoundError as e:
         logging.fatal(
             "Running of subprocess resulted in FileNotFoundError: " + str(e.strerror))
-        return {'status': 'Error', 'stdout': "Running of subprocess resulted in FileNotFoundError: " + str(e.strerror)}
+        return {'status': 'Error',
+                'stdout': "Running of subprocess resulted in FileNotFoundError: " + str(e.strerror)}
     except BaseException as e:
         logging.fatal('Unkown exception when trying to run subprocess! ' + str(e))
-        return {'status': 'Error', 'stdout': 'Unkown exception when trying to run subprocess! ' + str(e)}
+        return {'status': 'Error',
+                'stdout': 'Unkown exception when trying to run subprocess! ' + str(e)}
 
     # treat output
     try:
@@ -154,13 +158,15 @@ def run_command(arguments):
         elif run_result is not None and hasattr(run_result, 'stderr'):
             logging.error(
                 "Running of command " + " ".join(arguments) + " failed with output: " + str(run_result.stderr))
-            return {'status': 'Error', 'stdout': str(run_result.stdout), 'stdout': str(run_result.stderr) }
+            return {'status': 'Error',
+                    'stdout': str(run_result.stdout), 'stderr': str(run_result.stderr) }
         else:
             logging.error("Running of command " + " ".join(arguments) + " failed without output")
             return {'status': 'Error', 'stdout': 'Could not run command!'}
     except BaseException as e:
         logging.fatal('Unkown exception when trying to parse command " + " ".join(arguments) + " output! ' + str(e))
-        return {'status': 'Error', 'stdout': 'Unkown exception when trying to parse subprocess output! ' + str(e)}
+        return {'status': 'Error',
+                'stdout': 'Unkown exception when trying to parse subprocess output! ' + str(e)}
 
 ##################################################
 # Flask routes
@@ -187,12 +193,15 @@ def send():
 @app.route('/codesend', methods=['POST'])
 def codesend():
     request_valid, parsed_request = parse_request(
-        request, ['decimalcode'])
+        request, ['decimalcode'], ['protocol', 'pulselength', 'bitlength'])
     if not request_valid:
         return parsed_request
 
     return run_command([paths['433utils'] + "/codesend",
-                        parsed_request['decimalcode']])
+                        parsed_request['decimalcode'],
+                        parsed_request['protocol'] if 'protocol' in parsed_request else "",
+                        parsed_request['pulselength'] if 'pulselength' in parsed_request else "",
+                        parsed_request['bitlength'] if 'bitlength' in parsed_request else "" ])
 
 
 ##################################################
