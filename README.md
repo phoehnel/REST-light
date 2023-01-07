@@ -138,9 +138,8 @@ __RESTlight.items__
 ```
 Group:Switch:OR(OFF, ON)    gREST_light                 "REST-light"    <light>                            ["Location"]
 
-Switch                      RESTLight_10000_1           "Light"         <light>   (mygroup, gREST_light)   ["Switch"]
-Switch                      RESTLight_01000_3           "Light2"        <light>   (mygroup, gREST_light)   ["Switch"]
-Switch                      RESTLight_00100_3           "Light3"        <light>   (mygroup, gREST_light)   ["Switch"]
+Switch                      zap_1234567_2345678_key1    "Light"         <light>   (mygroup, gREST_light)   ["Switch"]
+Switch                      zap2_1234567_2345678_key1   "Light2"        <light>   (mygroup, gREST_light)   ["Switch"]
 ```
 
 __RESTlight.rules__
